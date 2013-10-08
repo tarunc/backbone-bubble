@@ -49,7 +49,7 @@ var bubbleChart = new BubbleChart({
 });
 
 // Uses PointsModel internally
-// Searches for the keys: color, label, size, x, and y. PointsModel as x and y built-in since that represents a point.
+// Searches for the keys: color, label, size, x, and y. PointsModel has x and y built-in since that represents a point.
 var model = new PointsModel({
   color: {
     title: 'color', // property name in json
