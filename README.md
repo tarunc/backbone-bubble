@@ -49,10 +49,11 @@ var bubbleChart = new BubbleChart({
 });
 
 // Uses PointsModel internally
+// Searches for the keys: color, label, size, x, and y. PointsModel as x and y built-in since that represents a point.
 var model = new PointsModel({
   color: {
     title: 'color', // property name in json
-    // custom mapper function
+    // custom data mapper function
     map: function(d) {
       return this.title ? d[this.title] : null;
     }
@@ -72,5 +73,6 @@ var model = new PointsModel({
     }
   }
 });
-
 ```
+
+See [static/movies.json](https://github.com/tarunc/backbone-bubble/blob/master/static/movies.json) for the how it expects data.
