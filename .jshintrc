@@ -1,0 +1,31 @@
+{
+  "camelcase": true,
+  "indent": 2,
+  "white": false,
+  "curly": true,
+  "eqeqeq": true,
+  "immed": true,
+  "latedef": true,
+  "newcap": true,
+  "noarg": true,
+  "sub": true,
+  "undef": true,
+  "boss": true,
+  "eqnull": true,
+  "browser": true,
+  "jquery": true,
+  "camelcase": false,
+  "globals": {
+    "module": true,
+    "require": true,
+    "define": true,
+    "jQuery": true,
+    "jquery": true,
+    "$": true,
+    "d3": true,
+    "Backbone": true,
+    "_": true,
+    "prettyPrint": true,
+    "process": true
+  }
+}

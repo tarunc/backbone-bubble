@@ -1,0 +1,184 @@
+[
+  {
+    "label": "Avatar",
+    "color": "Action",
+    "size": "425000000",
+    "y": "760507625",
+    "x": "8.0"
+  },
+  {
+    "label": "The Blind Side",
+    "color": "Drama",
+    "size": "35000000",
+    "y": "255959475",
+    "x": "7.6"
+  },
+  {
+    "label": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
+    "color": "Adventure",
+    "size": "180000000",
+    "y": "291710957",
+    "x": "6.9"
+  },
+  {
+    "label": "The Dark Knight",
+    "color": "Action",
+    "size": "185000000",
+    "y": "533345358",
+    "x": "9.0"
+  },
+  {
+    "label": "ET: The Extra-Terrestrial",
+    "color": "Drama",
+    "size": "10500000",
+    "y": "435110554",
+    "x": "7.9"
+  },
+  {
+    "label": "Finding Nemo",
+    "color": "Adventure",
+    "size": "94000000",
+    "y": "380529370",
+    "x": "8.1"
+  },
+  {
+    "label": "Ghostbusters",
+    "color": "Comedy",
+    "size": "30000000",
+    "y": "238632124",
+    "x": "7.8"
+  },
+  {
+    "label": "The Hunger Games",
+    "color": "Thriller/Suspense",
+    "size": "80000000",
+    "y": "408010692",
+    "x": "7.2"
+  },
+  {
+    "label": "Iron Man 3",
+    "color": "Action",
+    "size": "200000000",
+    "y": "396702239",
+    "x": "7.6"
+  },
+  {
+    "label": "Jurassic Park",
+    "color": "Action",
+    "size": "63000000",
+    "y": "395708305",
+    "x": "8.0"
+  },
+  {
+    "label": "King Kong",
+    "color": "Adventure",
+    "size": "207000000",
+    "y": "218080025",
+    "x": "7.3"
+  },
+  {
+    "label": "The Lion King",
+    "color": "Adventure",
+    "size": "79300000",
+    "y": "422780140",
+    "x": "8.4"
+  },
+  {
+    "label": "Monsters, Inc.",
+    "color": "Adventure",
+    "size": "115000000",
+    "y": "289423425",
+    "x": "8.0"
+  },
+  {
+    "label": "The Twilight Saga: New Moon",
+    "color": "Drama",
+    "size": "50000000",
+    "y": "296623634",
+    "x": "4.5"
+  },
+  {
+    "label": "Oz the Great and Powerful",
+    "color": "Adventure",
+    "size": "200000000",
+    "y": "233671832",
+    "x": "6.6"
+  },
+  {
+    "label": "Pirates of the Caribbean: Dead Man's Chest",
+    "color": "Adventure",
+    "size": "225000000",
+    "y": "423315812",
+    "x": "7.3"
+  },
+  {
+    "label": "Quantum of Solace",
+    "color": "Action",
+    "size": "230000000",
+    "y": "169368427",
+    "x": "6.7"
+  },
+  {
+    "label": "Raiders of the Lost Ark",
+    "color": "Adventure",
+    "size": "20000000",
+    "y": "248159971",
+    "x": "8.7"
+  },
+  {
+    "label": "Star Wars Ep. I: The Phantom Menace",
+    "color": "Adventure",
+    "size": "115000000",
+    "y": "474544677",
+    "x": "6.5"
+  },
+  {
+    "label": "Titanic",
+    "color": "Thriller/Suspense",
+    "size": "200000000",
+    "y": "658672302",
+    "x": "7.6"
+  },
+  {
+    "label": "Up",
+    "color": "Adventure",
+    "size": "175000000",
+    "y": "293004164",
+    "x": "8.3"
+  },
+  {
+    "label": "The Vow",
+    "color": "Drama",
+    "size": "30000000",
+    "y": "125014030",
+    "x": "6.7"
+  },
+  {
+    "label": "The War of the Worlds",
+    "color": "Action",
+    "size": "132000000",
+    "y": "234280354",
+    "x": "6.5"
+  },
+  {
+    "label": "X-Men: The Last Stand",
+    "color": "Action",
+    "size": "210000000",
+    "y": "234362462",
+    "x": "6.8"
+  },
+  {
+    "label": "You've Got Mail",
+    "color": "Drama",
+    "size": "65000000",
+    "y": "115821495",
+    "x": "6.3"
+  },
+  {
+    "label": "Zookeeper",
+    "color": "Romantic Comedy",
+    "size": "80000000",
+    "y": "80360866",
+    "x": "5.0"
+  }
+]

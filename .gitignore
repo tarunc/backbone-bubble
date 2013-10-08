@@ -1,0 +1,35 @@
+.DS_Store
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.gz
+
+pids
+logs/*
+./results
+build/*
+dist/*
+js/*
+vendor/*
+report/*
+coverage/*
+temp/*
+
+npm-debug.log
+node_modules
+
+# emacs and other IDEs
+*~
+*.iml
+
+# sublime project files
+*.sublime-project
+*.sublime-workspace
+
+# development ssl certificate
+*.crt
+*.key
