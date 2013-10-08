@@ -7,8 +7,6 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
       grid: true,
       maxRadius: 30,
       color: null,
-      height: 500,
-      width: 800,
       box: true,
       tooltips: true,
       url: '/static/movies.json',
