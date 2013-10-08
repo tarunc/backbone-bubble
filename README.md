@@ -32,11 +32,12 @@ var bubbleChart = new BubbleChart({
   el: $('#main')[0],
   labels: false, // Labels on the circle
   grid: true, // Can also be:
-  // { x: true, y: { shortLines: true, text: true, lines: true } } or { x: { lines: false, text: true }, y: false }
-  // { x: true, y: true, shortLines: true } etc
+  // { x: true, y: { shortLines: true, text: true, lines: true } }
+  // or { x: { lines: false, text: true }, y: false }
+  // or { x: true, y: true, shortLines: true } etc
   maxRadius: 30, // Maximum Radius of a circle. Will scale the size parameter accordingly
   box: true, // Draw a box around the chart
-  tooltips: true, // Tooltips
+  tooltips: true, // Tooltips on hover (located where the mouse is located)
   url: '/static/movies.json', // Url to server
   params: { 'request': 'params', 'go': 'here' }, // Request parameters
   titles: { // Chart titles
@@ -49,7 +50,9 @@ var bubbleChart = new BubbleChart({
 });
 
 // Uses PointsModel internally
-// Searches for the keys: color, label, size, x, and y. PointsModel has x and y built-in since that represents a point.
+// Looks for the keys: color, label, size, x, and y.
+// PointsModel has x and y built-in since that represents a point.
+// All others are optional and extra
 var model = new PointsModel({
   color: {
     title: 'color', // property name in json
@@ -75,4 +78,4 @@ var model = new PointsModel({
 });
 ```
 
-See [static/movies.json](https://github.com/tarunc/backbone-bubble/blob/master/static/movies.json) for the how it expects data.
+See [static/movies.json](https://github.com/tarunc/backbone-bubble/blob/master/static/movies.json) for the how it expects json data to be structured.
