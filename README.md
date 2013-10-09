@@ -25,6 +25,12 @@ bower install
 grunt dev
 ```
 
+or to run the flask application
+
+```bash
+python ./run.py
+```
+
 ## Usage
 
 ```javascript
