@@ -1,13 +1,46 @@
 define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'PointsModel'], function(_, Backbone, $, d3, ColorMe, Points) {
   "use strict";
 
+  // Get the median of an array.
+  function median(values) {
+    values.sort(function(a, b) {
+      return a - b;
+    });
+
+    var half = Math.floor(values.length/2);
+
+    if (values.length % 2) {
+      return values[half];
+    } else {
+      return (parseFloat(values[half-1]) + parseFloat(values[half])) / 2.0;
+    }
+  }
+
+  // Helper function to help calculate where the axis are and the number of ticks
+  function calulateAxisAndTicks(scale, approxAxis, tickCount) {
+    if (tickCount <= 4) {
+      return;
+    }
+
+    var ticks = scale.ticks(tickCount);
+    var acceptable = Math.exp(Math.round(Math.log(ticks[1] - ticks[0])) - 1);
+    var middleTick = ticks[Math.floor(ticks.length/2)];
+
+    if (Math.abs(middleTick - approxAxis) < acceptable) {
+      return { axis: middleTick, ticks: tickCount };
+    }
+
+    return calulateAxisAndTicks(scale, approxAxis, tickCount + 1);
+  }
+
   var BubbleChart = Backbone.View.extend({
     options: {
       labels: false,
-      grid: true,
+      grid: { x: true, y: true },
       maxRadius: 30,
+      margin: 0.10,
       color: null,
-      box: true,
+      box: false,
       tooltips: true,
       url: '/static/movies.json',
       params: { 'request': 'params', 'go': 'here' },
@@ -17,6 +50,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
         y: 'Total $$$ Made by Movie'
       },
       tooltipTemplate: _.template('<div class="label"><%- label %></div><div class="x">IMDB Rating: <%- x %></div><div class="y">Box Office: $<%- y %></div><div class="size">Budget: $<%- size %></div><div class="color">Genre: <%- color %></div>'),
+      approximateTickCount: 10
     },
     initialize: function(options) {
       if (!this.model) {
@@ -105,35 +139,73 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
       var points = model.applyTo(data);
 
       // let's calculate margins
-      var marginLeft = !options.grid ? 0 : d3.max(points, function(d){ return (Math.log(d.y) / 2.302585092994046) + 1; }) * 9,
-          marginBottom = (!options.grid ? 0 : 20),
-          marginTop = (!titles || !titles.main ? 0 : 20),
-          w = options.width - marginLeft - 1,
-          h = options.height - marginBottom - marginTop - 2;
+      var marginLeft = 0, // !options.grid ? 0 : d3.max(points, function(d){ return (Math.log(d.y) / 2.302585092994046) + 1; }) * 9,
+          marginBottom = 0, // (!options.grid ? 0 : 20),
+          marginTop = (!titles || !titles.main ? 0 : 50),
+          marginRight = 0,
 
-      var xScale = d3.scale.linear().range([marginLeft, options.width - 1]).domain([d3.min(points, function(d){ return d.x; }), d3.max(points, function(d){ return d.x; })]),
-          yScale = d3.scale.linear().range([h, marginBottom + marginTop]).domain([d3.min(points, function(d){ return d.y; }), d3.max(points, function(d){ return d.y; })]),
+          w = options.width - marginRight - marginLeft - 1,
+          h = options.height - marginBottom - marginTop - 1,
+
+          xMargin = options.margin && options.margin.x ? options.margin.x : (options.margin || 0),
+          yMargin = options.margin && options.margin.y ? options.margin.y : (options.margin || 0),
+
+          xMin = d3.min(points, function(d){ return d.x; }) * (1 - xMargin),
+          xMax = d3.max(points, function(d){ return d.x; }) * (1 + xMargin),
+
+          yMin = d3.min(points, function(d){ return d.y; }) * (1 - yMargin),
+          yMax = d3.max(points, function(d){ return d.y; }) * (1 + yMargin);
+
+      var xScale = d3.scale.linear().range([marginLeft, options.width - 1 - marginRight]).domain([xMin, xMax]),
+          yScale = d3.scale.linear().range([options.height - 1 - marginBottom, marginTop]).domain([yMin, yMax]),
           sizeScale = d3.scale.linear().range([1, Math.pow(parseFloat(options.maxRadius), 2)*Math.PI]).domain([ d3.min(points, function(d){ return d.size; }), d3.max(points, function(d){ return d.size; }) ]),
 
-      svg = target.append("svg:svg")
-          .attr("width", options.width)
-          .attr("height", options.height)
-          .append("svg:g");
+          // Define medians. There must be a way to do this with d3.js but I can't figure it out.
+          xMed = median(_.pluck(points, 'x')),
+          yMed = median(_.pluck(points, 'y')),
 
+          xAvg = d3.mean(points, function(d){ return d.x; }),
+          yAvg = d3.mean(points, function(d){ return d.y; }),
+
+          xAxis = (xMax - xMin) / 2 + xMin,
+          yAxis = (yMax - yMin) / 2 + yMin,
+
+          svg = target.append("svg:svg")
+              .attr("width", options.width)
+              .attr("height", options.height)
+              .append("svg:g");
+
+      var x = calulateAxisAndTicks(xScale, xAxis, options.approximateTickCount);
+      var y = calulateAxisAndTicks(yScale, yAxis, options.approximateTickCount);
+
+      xAxis = x.axis;
+      xScale = xScale.nice(x.ticks);
+
+      yAxis = y.axis;
+      yScale = yScale.nice(y.ticks);
 
       if (options.grid) {
         if (!_.isObject(options.grid) || options.grid.x) {
           var xrule = svg.selectAll("g.x")
-          .data(xScale.ticks(10))
+          .data(xScale.ticks(x.ticks))
           .enter().append("g")
             .attr("class", "x");
+
+          xrule.append("line")
+            .attr("x1", 0)
+            .attr("x2", 0)
+            .attr("y1", marginTop)
+            .attr("y2", h + marginTop)
+            .style("stroke", "#000")
+            .style("shape-rendering", "crispEdges")
+            .attr("transform", "translate(" + (xScale(xAxis)) + ",0)");
 
           if (!_.isObject(options.grid) || !_.isObject(options.grid.x) || options.grid.x.lines) {
             xrule.append("line")
               .attr("x1", xScale)
               .attr("x2", xScale)
-              .attr("y1", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? h - 3 : marginTop)
-              .attr("y2", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? h + 3 : h)
+              .attr("y1", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? xScale(xAxis) - 3 : marginTop)
+              .attr("y2", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? xScale(xAxis) + 3 : h + marginTop)
               .style("stroke", "#ccc")
               .style("shape-rendering", "crispEdges");
           }
@@ -141,7 +213,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
           if (!_.isObject(options.grid) || !_.isObject(options.grid.x) || options.grid.x.text) {
             xrule.append("text")
               .attr("x", xScale)
-              .attr("y", h + 3)
+              .attr("y", (yScale(yAxis) + 3))
               .attr("dy", ".71em")
               .attr("text-anchor", "middle")
               .style("font-size", "10px")
@@ -150,27 +222,37 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
           }
 
           if (titles && titles.x) {
-            xrule.append("text")
-              .attr("x", w + marginLeft - 6)
-              .attr("y", h - 6)
+            svg.append("text")
+              .attr("x", 6)
+              .attr("y", (yScale(yAxis) - 6))
+              .attr("class", "axis-title")
               .style("font-size", "12px")
               .style("font-family", "Arial, Helvetica, sans-serif")
-              .style("text-anchor", "end")
+              .style("text-anchor", "start")
               .text(titles.x.toString());
           }
         }
 
         if (!_.isObject(options.grid) || options.grid.y) {
           var yrule = svg.selectAll("g.y")
-            .data(yScale.ticks(10))
+            .data(yScale.ticks(y.ticks))
             .enter().append("g")
               .attr("class", "y")
               .attr("transform", "translate(" + marginLeft + ",0)");
 
+          yrule.append("line")
+            .attr("x1", marginLeft)
+            .attr("x2", w + marginLeft)
+            .attr("y1", 0)
+            .attr("y2", 0)
+            .style("stroke", "#000")
+            .style("shape-rendering", "crispEdges")
+            .attr("transform", "translate(0," + (yScale(yAxis)) + ")");
+
           if (!_.isObject(options.grid) || !_.isObject(options.grid.y) || options.grid.y.lines) {
             yrule.append("line")
-              .attr("x1", (options.grid.shortLines || (options.grid.y && options.grid.y.shortLines)) ? -3 : 0)
-              .attr("x2", (options.grid.shortLines || (options.grid.y && options.grid.y.shortLines)) ? 3 : w)
+              .attr("x1", (options.grid.shortLines || (options.grid.y && options.grid.y.shortLines)) ? yScale(yAxis) -3 : marginLeft)
+              .attr("x2", (options.grid.shortLines || (options.grid.y && options.grid.y.shortLines)) ? yScale(yAxis) + 3 : w + marginLeft)
               .attr("y1", yScale)
               .attr("y2", yScale)
               .style("stroke", "#ccc")
@@ -179,7 +261,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
 
           if (!_.isObject(options.grid) || !_.isObject(options.grid.y) || options.grid.y.text) {
             yrule.append("text")
-              .attr("x", -3)
+              .attr("x", (xScale(xAxis) - 3))
               .attr("y", yScale)
               .attr("dy", ".35em")
               .attr("text-anchor", "end")
@@ -189,11 +271,11 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
           }
 
           if (titles && titles.y) {
-            yrule.append("text")
+            svg.append("text")
               // .attr("transform", "rotate(-90)")
-              .attr("y", 6 + marginTop)
-              .attr("dy", ".71em")
-              .attr("x", 6)
+              .attr("y", 12 + marginTop)
+              .attr("x", (xScale(xAxis) + 6))
+              .attr("class", "axis-title")
               .style("font-size", "12px")
               .style("font-family", "Arial, Helvetica, sans-serif")
               .style("text-anchor", "start")
@@ -204,8 +286,9 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
 
       if (titles && titles.main) {
         svg.append("text")
-          .attr("y", marginTop - 3)
+          .attr("y", 12)
           .attr("x", marginLeft + w/2)
+          .attr("class", "main-title")
           .style("text-anchor", "middle")
           .text(titles.main.toString());
       }
