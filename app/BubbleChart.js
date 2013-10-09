@@ -16,21 +16,17 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
     }
   }
 
-  // Helper function to help calculate where the axis are and the number of ticks
-  function calulateAxisAndTicks(scale, approxAxis, tickCount) {
-    if (tickCount <= 4) {
-      return;
-    }
+  function applyParams(method, context, params, cond) {
+    var x, c = 0, l = params.length;
 
-    var ticks = scale.ticks(tickCount);
-    var acceptable = Math.exp(Math.round(Math.log(ticks[1] - ticks[0])) - 1);
-    var middleTick = ticks[Math.floor(ticks.length/2)];
+    cond = cond || _.identity;
 
-    if (Math.abs(middleTick - approxAxis) < acceptable) {
-      return { axis: middleTick, ticks: tickCount };
-    }
+    do {
+      x = method.apply(context, params[c]);
+      c++;
+    } while(c < l && !cond(x, c));
 
-    return calulateAxisAndTicks(scale, approxAxis, tickCount + 1);
+    return x;
   }
 
   var BubbleChart = Backbone.View.extend({
@@ -48,8 +44,10 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
         x: 'IMDB Rating',
         y: 'Total $$$ Made by Movie'
       },
+      minTicks: 4,
+      maxTicks: 30,
       tooltipTemplate: _.template('<div class="label"><%- label %></div><div class="x">IMDB Rating: <%- x %></div><div class="y">Box Office: $<%- y %></div><div class="size">Budget: $<%- size %></div><div class="color">Genre: <%- color %></div>'),
-      approximateTickCount: 10
+      approximateTickCount: 7
     },
     initialize: function(options) {
       if (!this.model) {
@@ -116,6 +114,34 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
     show: function() {
       this.$el.removeClass('hide');
     },
+    // Helper function to help calculate where the axis are and the number of ticks
+    calulateAxisAndTicks: function(scale, approxAxis, tickCount, divideOk, toDecrease) {
+      if (tickCount < this.options.minTicks || tickCount > this.options.maxTicks) {
+        return;
+      }
+
+      var ticks = scale.ticks(tickCount);
+
+      var dtick = ticks[1] - ticks[0];
+      var acceptable = Math.exp(Math.round(Math.log(dtick)) - 1);
+      var middleTick = ticks[Math.floor(ticks.length/2)] + (divideOk ? dtick/2 : 0);
+
+      console.log(middleTick, approxAxis, acceptable, ticks.length, tickCount, divideOk, dtick, toDecrease);
+
+      if (Math.abs(middleTick - approxAxis) < acceptable) {
+        return { axis: middleTick, ticks: ticks.length };
+      }
+
+      if (divideOk) {
+        middleTick -= dtick;
+
+        if (Math.abs(middleTick - approxAxis) < acceptable) {
+          return { axis: middleTick, ticks: ticks.length };
+        }
+      }
+
+      return this.calulateAxisAndTicks(scale, approxAxis, tickCount + (toDecrease ? -1 : 1), divideOk);
+    },
     render: function() {
       if (!this.data || !this.model) {
         return this;
@@ -180,8 +206,21 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
               .attr("height", options.height)
               .append("svg:g");
 
-      var x = calulateAxisAndTicks(xScale, xAxis, options.approximateTickCount);
-      var y = calulateAxisAndTicks(yScale, yAxis, options.approximateTickCount);
+      var xParams = [
+        [xScale, xAxis, options.approximateTickCount],
+        [xScale, xAxis, options.approximateTickCount, true],
+        [xScale, xAxis, options.approximateTickCount - 1, false, true],
+        [xScale, xAxis, options.approximateTickCount - 1, true, true]];
+
+      var x = applyParams(this.calulateAxisAndTicks, this, xParams);
+
+      var yParams = [
+        [yScale, yAxis, options.approximateTickCount],
+        [yScale, yAxis, options.approximateTickCount, true],
+        [yScale, yAxis, options.approximateTickCount - 1, false, true],
+        [yScale, yAxis, options.approximateTickCount - 1, true, true]];
+
+      var y = applyParams(this.calulateAxisAndTicks, this, yParams);
 
       xAxis = x.axis;
       xScale = xScale.nice(x.ticks);

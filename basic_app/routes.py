@@ -15,10 +15,10 @@ def getIndex():
 
 @app.route('/data.json', methods=['GET'])
 def getData():
-    xMin = float(request.args.get('xMin', -100))
+    xMin = float(request.args.get('xMin', 0))
     xMax = float(request.args.get('xMax', 100))
 
-    yMin = float(request.args.get('yMin', -100))
+    yMin = float(request.args.get('yMin', 0))
     yMax = float(request.args.get('yMax', 100))
 
     sizeMax = float(request.args.get('sizeMax', 1000))

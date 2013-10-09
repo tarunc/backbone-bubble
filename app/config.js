@@ -17,11 +17,6 @@ require.config({
 
     // D3
     "d3": "../vendor/bower/d3/d3",
-
-    // BubbleChart
-    "BubbleChart": "./modules/BubbleChart",
-    "ColorMe": "./modules/ColorMe",
-    "PointsModel": "./modules/PointsModel"
   },
 
   shim: {
