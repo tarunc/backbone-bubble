@@ -35,12 +35,13 @@ def getData():
         colors.append(randomString())
 
     for c in xrange(count):
-        point = {}
-        point['x'] = random.uniform(xMin, xMax)
-        point['y'] = random.uniform(yMin, yMax)
-        point['size'] = random.uniform(sizeMin, sizeMax)
-        point['color'] = random.choice(colors)
-        point['label'] = randomString()
+        point = {
+            'x': random.uniform(xMin, xMax),
+            'y': random.uniform(yMin, yMax),
+            'size': random.uniform(sizeMin, sizeMax),
+            'color': random.choice(colors),
+            'label': randomString()
+        }
 
         points.append(point)
 

@@ -44,9 +44,9 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
         x: 'IMDB Rating',
         y: 'Total $$$ Made by Movie'
       },
+      tooltipTemplate: _.template('<div class="label"><%- label %></div><div class="x">IMDB Rating: <%- x %></div><div class="y">Box Office: $<%- y %></div><div class="size">Budget: $<%- size %></div><div class="color">Genre: <%- color %></div>'),
       minTicks: 4,
       maxTicks: 30,
-      tooltipTemplate: _.template('<div class="label"><%- label %></div><div class="x">IMDB Rating: <%- x %></div><div class="y">Box Office: $<%- y %></div><div class="size">Budget: $<%- size %></div><div class="color">Genre: <%- color %></div>'),
       approximateTickCount: 7
     },
     initialize: function(options) {

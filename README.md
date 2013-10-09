@@ -53,6 +53,10 @@ var bubbleChart = new BubbleChart({
   },
   // Template for the tooltip
   tooltipTemplate: _.template('<div class="label"><%- label %></div><div class="x">IMDB Rating: <%- x %></div><div class="y">Box Office: $<%- y %></div><div class="size">Budget: $<%- size %></div><div class="color">Genre: <%- color %></div>'),
+  // Ticks
+  minTicks: 4,
+  maxTicks: 30,
+  approximateTickCount: 7
 });
 
 // Uses PointsModel internally
