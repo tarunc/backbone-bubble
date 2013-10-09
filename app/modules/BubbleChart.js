@@ -38,7 +38,6 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
       labels: false,
       grid: { x: true, y: true },
       maxRadius: 30,
-      margin: 0.10,
       color: null,
       box: false,
       tooltips: true,
@@ -150,15 +149,21 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
           xMargin = options.margin && options.margin.x ? options.margin.x : (options.margin || 0),
           yMargin = options.margin && options.margin.y ? options.margin.y : (options.margin || 0),
 
-          xMin = d3.min(points, function(d){ return d.x; }) * (1 - xMargin),
-          xMax = d3.max(points, function(d){ return d.x; }) * (1 + xMargin),
+          sizeMin = d3.min(points, function(d){ return d.size; }),
+          sizeMax = d3.max(points, function(d){ return d.size; }),
 
-          yMin = d3.min(points, function(d){ return d.y; }) * (1 - yMargin),
-          yMax = d3.max(points, function(d){ return d.y; }) * (1 + yMargin);
+          sizeScale = d3.scale.linear().range([1, Math.pow(parseFloat(options.maxRadius), 2) * Math.PI]).domain([sizeMin, sizeMax]),
 
-      var xScale = d3.scale.linear().range([marginLeft, options.width - 1 - marginRight]).domain([xMin, xMax]),
-          yScale = d3.scale.linear().range([options.height - 1 - marginBottom, marginTop]).domain([yMin, yMax]),
-          sizeScale = d3.scale.linear().range([1, Math.pow(parseFloat(options.maxRadius), 2)*Math.PI]).domain([ d3.min(points, function(d){ return d.size; }), d3.max(points, function(d){ return d.size; }) ]),
+          // maxRadius = sizeScale(sizeMax),
+
+          xMin = d3.min(points, function(d){ return d.x; }),
+          xMax = d3.max(points, function(d){ return d.x; }),
+
+          yMin = d3.min(points, function(d){ return d.y; }),
+          yMax = d3.max(points, function(d){ return d.y; });
+
+      var xScale = d3.scale.linear().range([marginLeft + options.maxRadius, options.width - options.maxRadius - marginRight]).domain([xMin, xMax]),
+          yScale = d3.scale.linear().range([options.height - options.maxRadius - marginBottom, marginTop + options.maxRadius]).domain([yMin, yMax]),
 
           // Define medians. There must be a way to do this with d3.js but I can't figure it out.
           xMed = median(_.pluck(points, 'x')),

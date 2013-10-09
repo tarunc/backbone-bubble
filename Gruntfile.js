@@ -168,7 +168,7 @@ module.exports = function(grunt) {
       release: {
         files: [
           {
-            src: ["app/**"],
+            src: ["app/**", "static/**"],
             dest: "dist/"
           },
           {
