@@ -15,18 +15,28 @@ def getIndex():
 
 @app.route('/data.json', methods=['GET'])
 def getData():
-    xMin = float(request.args.get('xMin', 0))
-    xMax = float(request.args.get('xMax', 100))
+    params = request.args
 
-    yMin = float(request.args.get('yMin', 0))
-    yMax = float(request.args.get('yMax', 100))
+    xMin = float(params.get('xMin', 0))
+    xMax = float(params.get('xMax', 100))
 
-    sizeMax = float(request.args.get('sizeMax', 1000))
-    sizeMin = float(request.args.get('sizeMin', 100))
+    yMin = float(params.get('yMin', 0))
+    yMax = float(params.get('yMax', 100))
 
-    colorsCount = int(request.args.get('colorsCount', 5))
+    sizeMax = float(params.get('sizeMax', 1000))
+    sizeMin = float(params.get('sizeMin', 100))
 
-    count = int(request.args.get('count', 20))
+    colorsCount = int(params.get('colorsCount', 5))
+
+    count = int(params.get('count', 20))
+
+    if colorsCount < 1:
+        # return '{ "error": "colorsCount parameter is negative" }'
+        colorsCount = 1
+
+    if count < 2:
+        # return '{ "error": "count parameter is negative" }'
+        count = 2
 
     points = []
 

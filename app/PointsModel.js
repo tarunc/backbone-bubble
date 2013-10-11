@@ -4,6 +4,8 @@ define('PointsModel', ['underscore'], function(_) {
 
   var PointsModel = function Points(modelProps) {
     return {
+      // Define a basic structure for a point
+      // x val and y val
       structure: _.extend({
         x: {
           title: 'x'
@@ -14,14 +16,7 @@ define('PointsModel', ['underscore'], function(_) {
         }
       }, modelProps),
 
-      reset: function() {
-        var model = this;
-
-        _.each(this.structure, function(structure) {
-          structure.value = [];
-        });
-      },
-
+      // Apply the model structure to a given set of data
       applyTo: function(data) {
         var model = this,
             points = [];
@@ -40,11 +35,8 @@ define('PointsModel', ['underscore'], function(_) {
           return false;
         }
 
+        // Return the points array
         return points;
-      },
-
-      isValid: function() {
-        return this.structure.x.value.length !== 0 && this.structure.y.value.length !== 0;
       }
     };
   };
