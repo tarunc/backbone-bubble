@@ -90,6 +90,21 @@ var model = new PointsModel({
 
 See [static/movies.json](https://github.com/tarunc/backbone-bubble/blob/master/static/movies.json) for the how it expects json data to be structured.
 
+## Test
+
+To run tests for the application, in the command-line, run:
+
+```sh
+grunt test
+```
+
+## Build
+
+To build the application/example for distribution, in the command-line, run:
+
+```sh
+grunt
+```
 
 ## License
 
