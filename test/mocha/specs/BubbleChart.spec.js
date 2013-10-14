@@ -84,7 +84,7 @@ define(function(require) {
       expect(points[0].length).to.equal(3);
     });
 
-    it("should have drawn 2 axis", function() {
+    it("should have drawn > 2 axis", function() {
       bubbleChart.render();
 
       var axis = d3.selectAll('line.axis');
