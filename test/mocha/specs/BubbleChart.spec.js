@@ -1,52 +1,95 @@
 define(function(require) {
   "use strict";
 
-  describe("Simple tests examples", function() {
-    it("should detect true", function() {
-      expect(true).to.be.true;
-    });
+  var BubbleChart = require('BubbleChart');
+  var _ = require('underscore');
+  var d3 = require('d3');
+  var $ = require('jquery');
 
-    it("should increments values", function() {
-      var mike = 0;
+  describe("BubbleChart", function() {
+    var bubbleChart;
 
-      expect(mike++ === 0).to.be.true;
-      expect(mike === 1).to.be.true;
-    });
-
-    it("should increments values (improved)", function() {
-      var mike = 0;
-
-      expect(mike++).to.equal(0);
-      expect(mike).to.equal(1);
-    });
-  });
-
-  describe("Tests with before/after hooks", function() {
-    var a = 0;
+    if (!$('#main').length) {
+      $(document.body).append('<div id="main"></div>');
+    }
 
     beforeEach(function() {
-      a++;
+      bubbleChart = new BubbleChart({
+        el: $('#main')[0],
+        data: [
+          {
+            "label": "Avatar",
+            "color": "Action",
+            "size": "425000000",
+            "y": "760507625",
+            "x": "8.0"
+          },
+          {
+            "label": "The Blind Side",
+            "color": "Drama",
+            "size": "35000000",
+            "y": "255959475",
+            "x": "7.6"
+          },
+          {
+            "label": "The Chronicles of Narnia: The Lion, the Witch and the Wardrobe",
+            "color": "Adventure",
+            "size": "180000000",
+            "y": "291710957",
+            "x": "-6.9"
+          }
+        ],
+        titles: {
+          main: 'Test Graph'
+        }
+      });
     });
 
-    afterEach(function() {
-      a = 0
+    it("should have a model", function() {
+      expect(bubbleChart.model).to.be.an('object');
     });
 
-    it("should increment value", function() {
-      expect(a).to.equal(1);
+    it("should have options", function() {
+      expect(bubbleChart.options).to.be.an('object');
+      expect(bubbleChart.options.titles).to.be.an('object');
+      expect(bubbleChart.options.titles.main === 'Test Graph').to.be.true;
     });
 
-    it("should reset after each test", function() {
-      expect(a).to.equal(1);
+    it("should have 3 data points", function() {
+      expect(bubbleChart.data).to.be.an('array');
+      expect(bubbleChart.data.length).to.equal(3);
     });
-  });
 
-  describe("Async tests", function() {
-    it("should wait timer", function(done) {
-      setTimeout(function() {
-        expect(true).to.be.true;
-        done();
-      }, 500);
+    it("should have an svg", function() {
+      bubbleChart.render();
+
+      var target = d3.selectAll('#main');
+      expect(target.length).to.equal(1);
+      expect(target[0].length).to.equal(1);
+
+      var svg = d3.selectAll('svg');
+      expect(svg.length).to.equal(1);
+      expect(svg[0].length).to.equal(1);
+
+      svg = target.selectAll('svg');
+      expect(svg.length).to.equal(1);
+      expect(svg[0].length).to.equal(1);
+    });
+
+    it("should have drawn 3 points", function() {
+      bubbleChart.render();
+
+      var points = d3.selectAll('g.point');
+      expect(points.length).to.equal(1);
+      expect(points[0].length).to.equal(3);
+    });
+
+    it("should have drawn 2 axis", function() {
+      bubbleChart.render();
+
+      var axis = d3.selectAll('line.axis');
+      expect(axis.length).to.equal(1);
+      expect(axis[0].length).to.above(2);
     });
   });
 });

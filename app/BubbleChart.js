@@ -82,6 +82,8 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
       // Fetch data if not fetched
       if (!this.data || !this.data.length) {
         this.fetchData();
+      } else {
+        this.render();
       }
     },
     fetchData: function() {
@@ -157,7 +159,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
     },
     render: function() {
       // Only proceed with rendering if we have data and we have a model
-      if (!this.data || !this.model) {
+      if (!this.data || !this.model || !this.isInDom()) {
         return this;
       }
 
@@ -229,7 +231,8 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
         [xScale, xAxis, options.approximateTickCount],
         [xScale, xAxis, options.approximateTickCount, true], // If we didn't find it
         [xScale, xAxis, options.approximateTickCount - 1, false, true],
-        [xScale, xAxis, options.approximateTickCount - 1, true, true]];
+        [xScale, xAxis, options.approximateTickCount - 1, true, true]
+      ];
 
       var x = applyParams(this.calulateAxisAndTicks, this, xParams) || { axis: xAxis, ticks: options.approximateTickCount };
 
@@ -237,7 +240,8 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
         [yScale, yAxis, options.approximateTickCount],
         [yScale, yAxis, options.approximateTickCount, true],
         [yScale, yAxis, options.approximateTickCount - 1, false, true],
-        [yScale, yAxis, options.approximateTickCount - 1, true, true]];
+        [yScale, yAxis, options.approximateTickCount - 1, true, true]
+      ];
 
       var y = applyParams(this.calulateAxisAndTicks, this, yParams) || { axis: yAxis, ticks: options.approximateTickCount };
 
@@ -261,6 +265,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
             .attr("x2", 0)
             .attr("y1", marginTop)
             .attr("y2", h + marginTop)
+            .attr("class", "axis")
             .style("stroke", "#000")
             .style("shape-rendering", "crispEdges")
             .attr("transform", "translate(" + (xScale(xAxis)) + ",0)");
@@ -272,6 +277,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
               .attr("x2", xScale)
               .attr("y1", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? xScale(xAxis) - 3 : marginTop)
               .attr("y2", (options.grid.shortLines || (options.grid.x && options.grid.x.shortLines)) ? xScale(xAxis) + 3 : h + marginTop)
+              .attr("class", "grid")
               .style("stroke", "#ccc")
               .style("shape-rendering", "crispEdges");
           }
@@ -314,6 +320,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
             .attr("x2", w + marginLeft)
             .attr("y1", 0)
             .attr("y2", 0)
+            .attr("class", "axis")
             .style("stroke", "#000")
             .style("shape-rendering", "crispEdges")
             .attr("transform", "translate(0," + (yScale(yAxis)) + ")");
@@ -324,6 +331,7 @@ define('BubbleChart', ['underscore', 'backbone', 'jquery', 'd3', 'ColorMe', 'Poi
               .attr("x2", (options.grid.shortLines || (options.grid.y && options.grid.y.shortLines)) ? yScale(yAxis) + 3 : w + marginLeft)
               .attr("y1", yScale)
               .attr("y2", yScale)
+              .attr("class", "grid")
               .style("stroke", "#ccc")
               .style("shape-rendering", "crispEdges");
           }
